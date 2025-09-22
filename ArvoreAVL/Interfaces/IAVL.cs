@@ -2,8 +2,6 @@
 
 public interface IAVL<T> : IABP<T>
 {
-    int GetFatorBalanceamento(Node<T> no);
-
     // ROTAÇÕES
     // Rotaçoes Simples
     void RotacaoSimplesEsquerda(Node<T> no);

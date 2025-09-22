@@ -2,11 +2,20 @@
 
 public class ABP<T> : IABP<T> where T : IComparable<T>
 {
-    private Node<T>? Raiz;
-    private int Tamanho { get; set; }
+    protected Node<T>? Raiz;
+    protected int Tamanho { get; set; }
 
-    /////////// CONSTRUTOR ///////////
-    public ABP() => Raiz = null;
+    /////////// CONSTRUTORES ///////////
+    public ABP()
+    {
+        Raiz = null;
+        Tamanho = 0;
+    }
+    public ABP(T dado)
+    {
+        Raiz = new Node<T>(dado);
+        Tamanho = 1;
+    }
 
 
     // Metodos Principais
@@ -33,7 +42,7 @@ public class ABP<T> : IABP<T> where T : IComparable<T>
     {
         return (Raiz is null) ? 0 : ContarAltura(Root());
     }
-    private int ContarAltura(Node<T> no)
+    protected int ContarAltura(Node<T> no)
     {
         if (no is null) return 0;
 
@@ -43,11 +52,11 @@ public class ABP<T> : IABP<T> where T : IComparable<T>
         return 1 + Math.Max(alturaDireita, alturaEsquerda);
     }
 
-    public void Insert(T dado)
+    public virtual void Insert(T dado)
     {
-        Raiz = InserirDado(Raiz, dado, null);
+        Raiz = InserirDadoABP(Raiz, dado, null);
     }
-    private Node<T>? InserirDado(Node<T>? noAtual, T dado, Node<T>? pai)
+    protected Node<T>? InserirDadoABP(Node<T>? noAtual, T dado, Node<T>? pai)
     {
         if (noAtual is null)
         {
@@ -62,11 +71,11 @@ public class ABP<T> : IABP<T> where T : IComparable<T>
 
         if (comparador < 0)
         {
-            noAtual.Esquerda = InserirDado(noAtual.Esquerda, dado, noAtual);
+            noAtual.Esquerda = InserirDadoABP(noAtual.Esquerda, dado, noAtual);
         }
         else if (comparador > 0)
         {
-            noAtual.Direita = InserirDado(noAtual.Direita, dado, noAtual);
+            noAtual.Direita = InserirDadoABP(noAtual.Direita, dado, noAtual);
         }
 
 
@@ -100,7 +109,7 @@ public class ABP<T> : IABP<T> where T : IComparable<T>
         Raiz = RemoverDado(Raiz, dado);
         return Raiz;
     }
-    private Node<T>? RemoverDado(Node<T>? noAtual, T dado)
+    protected Node<T>? RemoverDado(Node<T>? noAtual, T dado)
     {
         if (noAtual == null) return null;
 
@@ -147,7 +156,7 @@ public class ABP<T> : IABP<T> where T : IComparable<T>
         return noAtual;
 
     }
-    private Node<T> Minimo(Node<T> no)
+    protected Node<T> Minimo(Node<T> no)
     {
         while (no.Esquerda is not null)
         {
@@ -180,7 +189,7 @@ public class ABP<T> : IABP<T> where T : IComparable<T>
         return BuscarDado(Root(), dado);
     }
 
-    private Node<T>? BuscarDado(Node<T> noAtual, T dado)
+    protected Node<T>? BuscarDado(Node<T> noAtual, T dado)
     {
         if (noAtual is null) return null;
 
