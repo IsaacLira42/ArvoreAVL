@@ -6,6 +6,7 @@ public class Node<T>
     public Node<T>? Esquerda { get; set; }
     public Node<T>? Direita { get; set; }
     public Node<T> Pai { get; set; }
+    public int FatorBalanceamento { get; set; }
 
     public Node(T dado)
     {
@@ -13,5 +14,6 @@ public class Node<T>
         Esquerda = null;
         Direita = null;
         Pai = null;
+        FatorBalanceamento = 0;
     }
 }
