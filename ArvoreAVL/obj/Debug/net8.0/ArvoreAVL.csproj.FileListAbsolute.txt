@@ -1,0 +1,15 @@
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/bin/Debug/net8.0/ArvoreAVL
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/bin/Debug/net8.0/ArvoreAVL.deps.json
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/bin/Debug/net8.0/ArvoreAVL.runtimeconfig.json
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/bin/Debug/net8.0/ArvoreAVL.dll
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/bin/Debug/net8.0/ArvoreAVL.pdb
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ArvoreAVL.GeneratedMSBuildEditorConfig.editorconfig
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ArvoreAVL.AssemblyInfoInputs.cache
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ArvoreAVL.AssemblyInfo.cs
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ArvoreAVL.csproj.CoreCompileInputs.cache
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ArvoreAVL.sourcelink.json
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ArvoreAVL.dll
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/refint/ArvoreAVL.dll
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ArvoreAVL.pdb
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ArvoreAVL.genruntimeconfig.cache
+/home/isaac/IFRN/4º Periodo/EDNL/Atividades/AtividadeArvoreAVL/ArvoreAVL/obj/Debug/net8.0/ref/ArvoreAVL.dll

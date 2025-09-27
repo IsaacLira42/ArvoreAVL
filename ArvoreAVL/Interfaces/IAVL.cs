@@ -4,11 +4,11 @@ public interface IAVL<T> : IABP<T>
 {
     // ROTAÇÕES
     // Rotaçoes Simples
-    void RotacaoSimplesEsquerda(Node<T> no);
-    void RotacaoSimplesDireita(Node<T> no);
+    Node<T> RotacaoSimplesEsquerda(Node<T> no);
+    Node<T> RotacaoSimplesDireita(Node<T> no);
     // Rotaçoes Duplas
-    void RotacaoDuplaEsquerda(Node<T> no);
-    void RotacaoDuplaDireita(Node<T> no);
+    Node<T> RotacaoDuplaEsquerdaDireita(Node<T> pai);
+    Node<T> RotacaoDuplaDireitaEsquerda(Node<T> pai);
 
     // 
     void Insert(T dado);
