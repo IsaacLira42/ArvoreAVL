@@ -104,7 +104,7 @@ public class ABP<T> : IABP<T> where T : IComparable<T>
         return no.Pai;
     }
 
-    public Node<T>? Remove(T dado)
+    public virtual Node<T>? Remove(T dado)
     {
         Raiz = RemoverDado(Raiz, dado);
         return Raiz;
