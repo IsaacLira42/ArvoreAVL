@@ -60,6 +60,11 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     {
         pai.Direita = RotacaoSimplesDireita(pai.Direita);
         return RotacaoSimplesEsquerda(pai);
+        /*
+        pai.Direita = RotacaoSimplesDireita(pai.Direita!);
+        pai.Direita.Pai = pai; // garante pai atualizado
+        return RotacaoSimplesEsquerda(pai);
+        */
     }
     public Node<T> RotacaoSimplesDireita(Node<T> pai)
     {
@@ -188,7 +193,6 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     // ======================
     private void AtualizaFatorBalanceamentoInserir(Node<T>? pai, Node<T> filho)
     {
-
         while (pai is not null)
         {
             if (pai.Esquerda == filho)
