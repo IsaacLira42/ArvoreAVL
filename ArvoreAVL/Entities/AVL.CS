@@ -18,7 +18,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         }
 
         var atual = Raiz;
-        
+
         Node<T>? pai = null;
 
         int cmp = 0;
@@ -26,7 +26,9 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         while (atual is not null)
         {
             pai = atual;
+
             cmp = dado.CompareTo(atual.Dado);
+
             if (cmp == 0)
             {
                 // Ignora duplicados
@@ -48,6 +50,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             pai!.Esquerda = novo;
         else
             pai!.Direita = novo;
+
         Tamanho++;
 
         AtualizaFatorBalanceamentoInserir(pai, novo);
@@ -252,7 +255,6 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     {
         while (pai is not null)
         {
-            // Agora é seguro usar ponteiros, pois a chamada ocorre após o link do filho no pai imediato
             if (pai.Esquerda == filho)
                 pai.FatorBalanceamento++;
             else if (pai.Direita == filho)
@@ -269,7 +271,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 {
                     RotacaoDuplaDireitaEsquerda(pai);
                 }
-                // Após uma rotação durante inserção, a altura do subproblema é restaurada. Pode parar.
+
                 return;
             }
             else if (pai.FatorBalanceamento == 2)
@@ -282,7 +284,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 {
                     RotacaoDuplaEsquerdaDireita(pai);
                 }
-                // Após uma rotação durante inserção, a altura do subproblema é restaurada. Pode parar.
+
                 return;
             }
 
@@ -298,7 +300,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     // ======================
     public override Node<T>? Remove(T dado)
     {
-        // Primeiro, busca o nó e remove como ABP, mas precisamos saber o ponto onde a altura pode ter diminuído
+        // Primeiro, busca o nó e remove como ABP
         var no = Raiz;
         Node<T>? paiUltimo = null;
         Node<T>? ultimoVisitado = null;
@@ -348,8 +350,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         Tamanho--;
 
         // Rebalancear a partir do pai do nó removido
-        if (paiNo is not null)
-            RebalancearAposRemocao(paiNo, noEraEsquerdo ? -1 : +1);
+        if (paiNo is not null) RebalancearAposRemocao(paiNo, noEraEsquerdo ? -1 : +1);
 
         return Raiz;
     }
@@ -360,11 +361,9 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         {
             no.FatorBalanceamento += delta;
 
-            if (no.FatorBalanceamento == 1 || no.FatorBalanceamento == -1)
-            {
-                // altura deste nó não mudou; parar
-                return;
-            }
+            // altura deste nó não mudou; parar
+            if (no.FatorBalanceamento == 1 || no.FatorBalanceamento == -1) return;
+
             else if (no.FatorBalanceamento == 0)
             {
                 // altura diminuiu; continuar subindo
