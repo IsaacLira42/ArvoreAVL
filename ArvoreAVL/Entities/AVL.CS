@@ -56,39 +56,40 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         AtualizaFatorBalanceamentoInserir(pai, novo);
     }
 
-    private Node<T> InserirDadoAVL(Node<T>? noAtual, T dado, Node<T>? pai)
-    {
-        if (noAtual is null)
-        {
-            var novo = new Node<T>(dado);
-            novo.Pai = pai;
-            Tamanho++;
-            return novo;
-        }
+    // Metodo de inserir antigo
+    // private Node<T> InserirDadoAVL(Node<T>? noAtual, T dado, Node<T>? pai)
+    // {
+    //     if (noAtual is null)
+    //     {
+    //         var novo = new Node<T>(dado);
+    //         novo.Pai = pai;
+    //         Tamanho++;
+    //         return novo;
+    //     }
 
-        int comparador = dado.CompareTo(noAtual.Dado);
+    //     int comparador = dado.CompareTo(noAtual.Dado);
 
-        if (comparador < 0)
-        {
-            var antigo = noAtual.Esquerda;
-            noAtual.Esquerda = InserirDadoAVL(noAtual.Esquerda, dado, noAtual);
-            if (antigo is null && noAtual.Esquerda is not null)
-            {
-                AtualizaFatorBalanceamentoInserir(noAtual, noAtual.Esquerda);
-            }
-        }
-        if (comparador > 0)
-        {
-            var antigo = noAtual.Direita;
-            noAtual.Direita = InserirDadoAVL(noAtual.Direita, dado, noAtual);
-            if (antigo is null && noAtual.Direita is not null)
-            {
-                AtualizaFatorBalanceamentoInserir(noAtual, noAtual.Direita);
-            }
-        }
+    //     if (comparador < 0)
+    //     {
+    //         var antigo = noAtual.Esquerda;
+    //         noAtual.Esquerda = InserirDadoAVL(noAtual.Esquerda, dado, noAtual);
+    //         if (antigo is null && noAtual.Esquerda is not null)
+    //         {
+    //             AtualizaFatorBalanceamentoInserir(noAtual, noAtual.Esquerda);
+    //         }
+    //     }
+    //     if (comparador > 0)
+    //     {
+    //         var antigo = noAtual.Direita;
+    //         noAtual.Direita = InserirDadoAVL(noAtual.Direita, dado, noAtual);
+    //         if (antigo is null && noAtual.Direita is not null)
+    //         {
+    //             AtualizaFatorBalanceamentoInserir(noAtual, noAtual.Direita);
+    //         }
+    //     }
 
-        return noAtual;
-    }
+    //     return noAtual;
+    // }
 
     // ======================
     // Rotações AVL
