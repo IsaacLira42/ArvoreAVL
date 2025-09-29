@@ -177,6 +177,48 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     // ======================
     // Mostrar Arvore
     // ======================
+    private List<List<Node<T>?>> GetNodesByLevel()
+    {
+        var levels = new List<List<Node<T>?>>();
+        if (Raiz == null) return levels;
+
+        var queue = new Queue<Node<T>?>();
+        queue.Enqueue(Raiz);
+
+        while (queue.Count > 0)
+        {
+            var currentLevel = new List<Node<T>?>();
+            int levelSize = queue.Count;
+            bool hasNonNullNode = false;
+
+            for (int i = 0; i < levelSize; i++)
+            {
+                var node = queue.Dequeue();
+                currentLevel.Add(node);
+                if (node != null)
+                {
+                    hasNonNullNode = true;
+                    queue.Enqueue(node.Esquerda);
+                    queue.Enqueue(node.Direita);
+                }
+                else
+                {
+                    queue.Enqueue(null);
+                    queue.Enqueue(null);
+                }
+            }
+
+            if (hasNonNullNode)
+            {
+                levels.Add(currentLevel);
+            }
+            else
+            {
+                break;
+            }
+        }
+        return levels;
+    }
     public void Mostrar()
     {
         if (Raiz == null)
@@ -184,7 +226,33 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             Console.WriteLine("Árvore vazia");
             return;
         }
-        MostrarRecursivo(Raiz, 0);
+
+        var levels = GetNodesByLevel();
+        int consoleWidth = 80;
+
+        foreach (var level in levels)
+        {
+            int slotCount = level.Count;
+            int slotWidth = consoleWidth / slotCount;
+            string line = "";
+
+            foreach (var node in level)
+            {
+                string nodeText = "";
+                if (node != null)
+                {
+                    nodeText = $"{node.Dado}[{node.FatorBalanceamento}]";
+                }
+
+                int padding = (slotWidth - nodeText.Length) / 2;
+                if (padding < 0) padding = 0;
+
+                line += new string(' ', padding);
+                line += nodeText;
+                line += new string(' ', slotWidth - padding - nodeText.Length);
+            }
+            Console.WriteLine(line);
+        }
     }
     public void MostrarInOrder()
     {
@@ -202,21 +270,6 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         if (no.Esquerda is not null) MostrarInOrderRec(no.Esquerda);
         Console.Write($"{no.Dado}[{no.FatorBalanceamento}] ");
         if (no.Direita is not null) MostrarInOrderRec(no.Direita);
-    }
-    private void MostrarRecursivo(Node<T> no, int nivel)
-    {
-        if (no != null)
-        {
-            // Primeiro imprime a direita (para ficar com a raiz no meio)
-            MostrarRecursivo(no.Direita, nivel + 1);
-
-            // Imprime o nó atual com indentação proporcional ao nível
-            string indentacao = new string(' ', nivel * 12);
-            Console.WriteLine($"{indentacao}{no.Dado}[{no.FatorBalanceamento}]");
-
-            // Depois imprime a esquerda
-            MostrarRecursivo(no.Esquerda, nivel + 1);
-        }
     }
     public void MostrarFormatado()
     {
