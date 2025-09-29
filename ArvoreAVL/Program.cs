@@ -14,9 +14,7 @@ class Program
             Console.WriteLine("2) Remover");
             Console.WriteLine("3) Buscar");
             Console.WriteLine("4) Mostrar (visual)");
-            Console.WriteLine("5) Mostrar (formatado)");
-            Console.WriteLine("6) Sair");
-            Console.WriteLine("7) Mostrar (in-order)");
+            Console.WriteLine("5) Sair");
             Console.Write("Escolha: ");
 
             var opc = Console.ReadLine();
@@ -26,7 +24,7 @@ class Program
                 continue;
             }
 
-            if (opc == "6") break;
+            if (opc == "5") break;
 
             try
             {
@@ -78,14 +76,6 @@ class Program
                     case "4":
                         Console.WriteLine("\nÁrvore AVL (visual):");
                         arvore.Mostrar();
-                        break;
-                    case "5":
-                        Console.WriteLine("\nÁrvore AVL (formatado):");
-                        arvore.MostrarFormatado();
-                        break;
-                    case "7":
-                        Console.WriteLine("\nÁrvore AVL (in-order):");
-                        arvore.MostrarInOrder();
                         break;
                     default:
                         Console.WriteLine("Opção inválida.");

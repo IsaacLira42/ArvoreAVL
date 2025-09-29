@@ -117,43 +117,41 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     }
 
     // Metodo de inserir antigo
-    // private Node<T> InserirDadoAVL(Node<T>? noAtual, T dado, Node<T>? pai)
-    // {
-    //     if (noAtual is null)
-    //     {
-    //         var novo = new Node<T>(dado);
-    //         novo.Pai = pai;
-    //         Tamanho++;
-    //         return novo;
-    //     }
+    /*
+        private Node<T> InserirDadoAVL(Node<T>? noAtual, T dado, Node<T>? pai)
+        {
+            if (noAtual is null)
+            {
+                var novo = new Node<T>(dado);
+                novo.Pai = pai;
+                Tamanho++;
+                return novo;
+            }
 
-    //     int comparador = dado.CompareTo(noAtual.Dado);
+            int comparador = dado.CompareTo(noAtual.Dado);
 
-    //     if (comparador < 0)
-    //     {
-    //         var antigo = noAtual.Esquerda;
-    //         noAtual.Esquerda = InserirDadoAVL(noAtual.Esquerda, dado, noAtual);
-    //         if (antigo is null && noAtual.Esquerda is not null)
-    //         {
-    //             AtualizaFatorBalanceamentoInserir(noAtual, noAtual.Esquerda);
-    //         }
-    //     }
-    //     if (comparador > 0)
-    //     {
-    //         var antigo = noAtual.Direita;
-    //         noAtual.Direita = InserirDadoAVL(noAtual.Direita, dado, noAtual);
-    //         if (antigo is null && noAtual.Direita is not null)
-    //         {
-    //             AtualizaFatorBalanceamentoInserir(noAtual, noAtual.Direita);
-    //         }
-    //     }
+            if (comparador < 0)
+            {
+                var antigo = noAtual.Esquerda;
+                noAtual.Esquerda = InserirDadoAVL(noAtual.Esquerda, dado, noAtual);
+                if (antigo is null && noAtual.Esquerda is not null)
+                {
+                    AtualizaFatorBalanceamentoInserir(noAtual, noAtual.Esquerda);
+                }
+            }
+            if (comparador > 0)
+            {
+                var antigo = noAtual.Direita;
+                noAtual.Direita = InserirDadoAVL(noAtual.Direita, dado, noAtual);
+                if (antigo is null && noAtual.Direita is not null)
+                {
+                    AtualizaFatorBalanceamentoInserir(noAtual, noAtual.Direita);
+                }
+            }
 
-    //     return noAtual;
-    // }
-
-    // ======================
-    // Rotações AVL
-    // ======================
+            return noAtual;
+        }
+    */
 
     // ======================
     // Mostrar Arvore
@@ -233,53 +231,6 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 line += new string(' ', slotWidth - padding - nodeText.Length);
             }
             Console.WriteLine(line);
-        }
-    }
-    public void MostrarInOrder()
-    {
-        if (Raiz == null)
-        {
-            Console.WriteLine("Árvore vazia");
-            return;
-        }
-        MostrarInOrderRec(Raiz);
-        Console.WriteLine();
-    }
-    private void MostrarInOrderRec(Node<T> no)
-    {
-        if (no is null) return;
-        if (no.Esquerda is not null) MostrarInOrderRec(no.Esquerda);
-        Console.Write($"{no.Dado}[{no.FatorBalanceamento}] ");
-        if (no.Direita is not null) MostrarInOrderRec(no.Direita);
-    }
-    public void MostrarFormatado()
-    {
-        if (Raiz == null)
-        {
-            Console.WriteLine("Árvore vazia");
-            return;
-        }
-        MostrarFormatadoRecursivo(Raiz, 0, "");
-    }
-    private void MostrarFormatadoRecursivo(Node<T> no, int nivel, string prefixo)
-    {
-        if (no != null)
-        {
-            if (nivel > 0)
-            {
-                Console.Write(prefixo);
-                if (nivel > 1)
-                {
-                    Console.Write(new string(' ', (nivel - 1) * 12));
-                }
-            }
-
-            Console.WriteLine($"{no.Dado}[{no.FatorBalanceamento}]");
-
-            // Imprime filhos com indentação
-            string novoPrefixo = nivel == 0 ? "" : prefixo + new string(' ', 12);
-            MostrarFormatadoRecursivo(no.Direita, nivel + 1, novoPrefixo);
-            MostrarFormatadoRecursivo(no.Esquerda, nivel + 1, novoPrefixo);
         }
     }
 
