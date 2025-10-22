@@ -1,13 +1,8 @@
-
-
 public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
 {
     public AVL() : base() { }
     public AVL(T dado) : base(dado) { }
 
-    // ======================
-    // Sobrescrevendo Insert
-    // ======================
     public override void Insert(T dado)
     {
         if (Raiz is null)
@@ -18,23 +13,20 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         }
 
         var atual = Raiz;
-
         Node<T>? pai = null;
-
-        int cmp = 0;
+        int comparador = 0;
 
         while (atual is not null)
         {
             pai = atual;
+            comparador = dado.CompareTo(atual.Dado);
 
-            cmp = dado.CompareTo(atual.Dado);
-
-            if (cmp == 0)
+            if (comparador == 0)
             {
-                // Ignora duplicados
+                // ignora repetido
                 return;
             }
-            else if (cmp < 0)
+            else if (comparador < 0)
             {
                 atual = atual.Esquerda;
             }
@@ -46,7 +38,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
 
         var novo = new Node<T>(dado);
         novo.Pai = pai!;
-        if (cmp < 0)
+        if (comparador < 0)
             pai!.Esquerda = novo;
         else
             pai!.Direita = novo;
@@ -54,66 +46,6 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         Tamanho++;
 
         AtualizaFatorBalanceamentoInserir(pai, novo);
-    }
-
-    // ======================
-    // Remoção AVL (O(log n))
-    // ======================
-    public override Node<T>? Remove(T dado)
-    {
-        // Primeiro, busca o nó e remove como ABP
-        var no = Raiz;
-        Node<T>? paiUltimo = null;
-        Node<T>? ultimoVisitado = null;
-
-        // Busca para encontrar o nó e também manter trilha do pai
-        while (no is not null)
-        {
-            int cmp = dado.CompareTo(no.Dado);
-            if (cmp == 0) break;
-            ultimoVisitado = no;
-            if (cmp < 0) no = no.Esquerda; else no = no.Direita;
-        }
-
-        if (no is null) return Raiz; // não existe
-
-        // Caso com dois filhos: substitui pelo sucessor e remove o sucessor (como em ABP)
-        if (no.Esquerda is not null && no.Direita is not null)
-        {
-            // encontra sucessor
-            var s = no.Direita;
-            while (s!.Esquerda is not null) s = s.Esquerda;
-            no.Dado = s.Dado;
-            // agora vamos remover s, que tem no máximo um filho à direita
-            no = s;
-        }
-
-        // Agora no tem no máximo um filho
-        Node<T>? filhoUnico = no.Esquerda ?? no.Direita;
-        var paiNo = no.Pai;
-        bool noEraEsquerdo = paiNo is not null && paiNo.Esquerda == no;
-
-        if (filhoUnico is not null) filhoUnico.Pai = paiNo;
-
-        if (paiNo is null)
-        {
-            Raiz = filhoUnico; // removendo a raiz
-        }
-        else if (noEraEsquerdo)
-        {
-            paiNo.Esquerda = filhoUnico;
-        }
-        else
-        {
-            paiNo.Direita = filhoUnico;
-        }
-
-        Tamanho--;
-
-        // Rebalancear a partir do pai do nó removido
-        if (paiNo is not null) RebalancearAposRemocao(paiNo, noEraEsquerdo ? -1 : +1);
-
-        return Raiz;
     }
 
     // Metodo de inserir antigo
@@ -153,9 +85,59 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         }
     */
 
-    // ======================
-    // Mostrar Arvore
-    // ======================
+    public override Node<T>? Remove(T dado)
+    {
+        var no = Raiz;
+
+        // Busca para encontrar o nó
+        while (no is not null)
+        {
+            int comparador = dado.CompareTo(no.Dado);
+            if (comparador == 0) break;
+            if (comparador < 0) no = no.Esquerda; else no = no.Direita;
+        }
+
+        if (no is null) return Raiz; // valor nao encontrado, sai
+
+        // caso com 2 filhos, pega o sucessor
+        if (no.Esquerda is not null && no.Direita is not null)
+        {
+            // acha o sucessor
+            var s = no.Direita;
+            while (s!.Esquerda is not null) s = s.Esquerda;
+            no.Dado = s.Dado;
+            // agora o problema é remover s
+            no = s;
+        }
+
+        // no agr tem no max 1 filho
+        Node<T>? filhoUnico = no.Esquerda ?? no.Direita;
+        var paiNo = no.Pai;
+        bool noEraEsquerdo = paiNo is not null && paiNo.Esquerda == no;
+
+        if (filhoUnico is not null) filhoUnico.Pai = paiNo;
+
+        if (paiNo is null)
+        {
+            Raiz = filhoUnico; // se for a raiz
+        }
+        else if (noEraEsquerdo)
+        {
+            paiNo.Esquerda = filhoUnico;
+        }
+        else
+        {
+            paiNo.Direita = filhoUnico;
+        }
+
+        Tamanho--;
+
+        // Rebalanceia a arvore
+        if (paiNo is not null) RebalancearAposRemocao(paiNo, noEraEsquerdo ? -1 : +1);
+
+        return Raiz;
+    }
+
     private List<List<Node<T>?>> GetNodesByLevel()
     {
         var levels = new List<List<Node<T>?>>();
@@ -234,9 +216,6 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         }
     }
 
-    // ======================
-    // Auxiliares AVL
-    // ======================
     private void AtualizaFatorBalanceamentoInserir(Node<T>? pai, Node<T> filho)
     {
         while (pai is not null)
@@ -280,21 +259,21 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             pai = pai.Pai;
         }
     }
-    private void RebalancearAposRemocao(Node<T> no, int delta)
+    private void RebalancearAposRemocao(Node<T> no, int ajuste)
     {
-        // delta: -1 se a subárvore esquerda diminuiu, +1 se a subárvore direita diminuiu
+        // ajuste: -1 se a subarvore da esquerda diminuiu, +1 se a da direita diminuiu
         while (no is not null)
         {
-            no.FatorBalanceamento += delta;
+            no.FatorBalanceamento += ajuste;
 
-            // altura deste nó não mudou; parar
+            // altura n mudou, parar
             if (no.FatorBalanceamento == 1 || no.FatorBalanceamento == -1) return;
 
             else if (no.FatorBalanceamento == 0)
             {
-                // altura diminuiu; continuar subindo
+                // altura diminuiu, tem que continuar subindo
                 if (no.Pai is null) return;
-                delta = (no.Pai.Esquerda == no) ? -1 : +1;
+                ajuste = (no.Pai.Esquerda == no) ? -1 : +1;
                 no = no.Pai;
                 continue;
             }
@@ -303,19 +282,19 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 var r = no.Direita!;
                 if (r.FatorBalanceamento <= 0)
                 {
-                    // Rotação simples à esquerda
+                    // Rotacao simples a esquerda
                     RotacaoSimplesEsquerda(no);
                     if (r.FatorBalanceamento == 0)
                     {
-                        // Após rotação com filho bf==0, a altura não diminui mais; parar
+                        // caso especial, a altura nao diminui mais, parar
                         return;
                     }
                     else
                     {
-                        // altura diminuiu; continuar com o pai do novo topo
-                        var p = r.Pai; // após rotação, r sobe
+                        // altura diminuiu, continuar com o pai do novo topo
+                        var p = r.Pai;
                         if (p is null) return;
-                        delta = (p.Pai != null && p.Pai.Esquerda == p) ? -1 : +1;
+                        ajuste = (p.Pai != null && p.Pai.Esquerda == p) ? -1 : +1;
                         no = p.Pai!;
                         if (no is null) return;
                         continue;
@@ -323,12 +302,12 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 }
                 else
                 {
-                    // Rotação dupla direita-esquerda
+                    // Rotacao dupla
                     RotacaoDuplaDireitaEsquerda(no);
-                    // Após rotação dupla, a altura diminui; continuar
-                    var topo = no.Pai; // o novo topo da subárvore após rotação
+
+                    var topo = no.Pai;
                     if (topo is null) return;
-                    delta = (topo.Pai != null && topo.Pai.Esquerda == topo) ? -1 : +1;
+                    ajuste = (topo.Pai != null && topo.Pai.Esquerda == topo) ? -1 : +1;
                     no = topo.Pai!;
                     if (no is null) return;
                     continue;
@@ -339,18 +318,18 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 var l = no.Esquerda!;
                 if (l.FatorBalanceamento >= 0)
                 {
-                    // Rotação simples à direita
+                    // Rotacao simples a direita
                     RotacaoSimplesDireita(no);
                     if (l.FatorBalanceamento == 0)
                     {
-                        // Após rotação com filho bf==0, parar
+                        // caso especial, parar
                         return;
                     }
                     else
                     {
-                        var p = l.Pai; // após rotação, l sobe
+                        var p = l.Pai;
                         if (p is null) return;
-                        delta = (p.Pai != null && p.Pai.Esquerda == p) ? -1 : +1;
+                        ajuste = (p.Pai != null && p.Pai.Esquerda == p) ? -1 : +1;
                         no = p.Pai!;
                         if (no is null) return;
                         continue;
@@ -358,11 +337,11 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 }
                 else
                 {
-                    // Rotação dupla esquerda-direita
+                    // Rotacao dupla
                     RotacaoDuplaEsquerdaDireita(no);
                     var topo = no.Pai;
                     if (topo is null) return;
-                    delta = (topo.Pai != null && topo.Pai.Esquerda == topo) ? -1 : +1;
+                    ajuste = (topo.Pai != null && topo.Pai.Esquerda == topo) ? -1 : +1;
                     no = topo.Pai!;
                     if (no is null) return;
                     continue;
@@ -370,23 +349,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             }
         }
     }
-    private void AtualizaLigacaoComPai(Node<T> novoPai, Node<T> paiAntigo)
-    {
-        if (novoPai.Pai is null)
-        {
-            Raiz = novoPai;
-            return;
-        }
 
-        if (novoPai.Pai.Esquerda == paiAntigo)
-            novoPai.Pai.Esquerda = novoPai;
-        else
-            novoPai.Pai.Direita = novoPai;
-    }
-
-    // ======================
-    // Rotações
-    // ======================
     public Node<T> RotacaoDuplaEsquerdaDireita(Node<T> pai)
     {
         pai.Esquerda = RotacaoSimplesEsquerda(pai.Esquerda!);
@@ -401,9 +364,9 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     }
     public Node<T> RotacaoSimplesDireita(Node<T> pai)
     {
-        var filho = pai.Esquerda!; // Nó que vai subir
+        var filho = pai.Esquerda!;
 
-        // a arrvore direita do filho vira esquerda do pai
+        // a arvore direita do filho vira esquerda do pai
         pai.Esquerda = filho.Direita;
 
         if (filho.Direita != null) filho.Direita.Pai = pai;
@@ -415,19 +378,30 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         filho.Pai = pai.Pai;
         pai.Pai = filho;
 
-        AtualizaLigacaoComPai(filho, pai);
+        // Atualiza a ligacao com o pai do nó que subiu
+        if (filho.Pai is null)
+        {
+            Raiz = filho;
+        }
+        else
+        {
+            if (filho.Pai.Esquerda == pai)
+                filho.Pai.Esquerda = filho;
+            else
+                filho.Pai.Direita = filho;
+        }
 
         // atualiza fatores de balanceamento
-        int bfPaiAntes = pai.FatorBalanceamento;
-        int bfFilhoAntes = filho.FatorBalanceamento;
-        pai.FatorBalanceamento = bfPaiAntes - 1 - Math.Max(bfFilhoAntes, 0);
-        filho.FatorBalanceamento = bfFilhoAntes - 1 + Math.Min(bfPaiAntes, 0);
+        int fbPai = pai.FatorBalanceamento;
+        int fbFilho = filho.FatorBalanceamento;
+        pai.FatorBalanceamento = fbPai - 1 - Math.Max(fbFilho, 0);
+        filho.FatorBalanceamento = fbFilho - 1 + Math.Min(fbPai, 0);
 
         return filho;
     }
     public Node<T> RotacaoSimplesEsquerda(Node<T> pai)
     {
-        var filho = pai.Direita!; // o nó que vai subir
+        var filho = pai.Direita!;
 
         // Passa a subarvore esquerda do filho para ser a direita do pai
         pai.Direita = filho.Esquerda;
@@ -439,19 +413,28 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
 
         // Ajusta referencias de pais
         filho.Pai = pai.Pai;
-        var paiAntigo = pai;
         pai.Pai = filho;
 
         // Conecta com o avô
-        AtualizaLigacaoComPai(filho, paiAntigo);
+        if (filho.Pai is null)
+        {
+            Raiz = filho;
+        }
+        else
+        {
+            if (filho.Pai.Esquerda == pai)
+                filho.Pai.Esquerda = filho;
+            else
+                filho.Pai.Direita = filho;
+        }
 
         // Atualiza fatores de balanceamentp
-        int bfPaiAntes = pai.FatorBalanceamento;
-        int bfFilhoAntes = filho.FatorBalanceamento;
-        pai.FatorBalanceamento = bfPaiAntes + 1 - Math.Min(bfFilhoAntes, 0);
-        filho.FatorBalanceamento = bfFilhoAntes + 1 + Math.Max(bfPaiAntes, 0);
+        int fbPai = pai.FatorBalanceamento;
+        int fbFilho = filho.FatorBalanceamento;
+        pai.FatorBalanceamento = fbPai + 1 - Math.Min(fbFilho, 0);
+        filho.FatorBalanceamento = fbFilho + 1 + Math.Max(fbPai, 0);
 
-        return filho; // novo topo da rvore
+        return filho; // novo topo
     }
 
 }
