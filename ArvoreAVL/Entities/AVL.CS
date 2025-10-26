@@ -48,7 +48,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         AtualizaFatorBalanceamentoInserir(pai, novo);
     }
 
-    // Metodo de inserir antigo
+    // Metodo de inserir antigo (descartado)
     /*
         private Node<T> InserirDadoAVL(Node<T>? noAtual, T dado, Node<T>? pai)
         {
@@ -97,7 +97,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             if (comparador < 0) no = no.Esquerda; else no = no.Direita;
         }
 
-        if (no is null) return Raiz; // valor nao encontrado, sai
+        if (no is null) return Raiz; // valor nao encontrado entao sai
 
         // caso com 2 filhos, pega o sucessor
         if (no.Esquerda is not null && no.Direita is not null)
@@ -273,18 +273,24 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             {
                 // altura diminuiu, tem que continuar subindo
                 if (no.Pai is null) return;
-                ajuste = (no.Pai.Esquerda == no) ? -1 : +1;
+
+                if (no.Pai.Esquerda == no) {
+                    ajuste = -1;
+                } else {
+                    ajuste = 1;
+                }
+
                 no = no.Pai;
                 continue;
             }
             else if (no.FatorBalanceamento == -2)
             {
-                var r = no.Direita!;
-                if (r.FatorBalanceamento <= 0)
+                var filhoDireita = no.Direita!;
+                if (filhoDireita.FatorBalanceamento <= 0)
                 {
                     // Rotacao simples a esquerda
                     RotacaoSimplesEsquerda(no);
-                    if (r.FatorBalanceamento == 0)
+                    if (filhoDireita.FatorBalanceamento == 0)
                     {
                         // caso especial, a altura nao diminui mais, parar
                         return;
@@ -292,10 +298,16 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                     else
                     {
                         // altura diminuiu, continuar com o pai do novo topo
-                        var p = r.Pai;
-                        if (p is null) return;
-                        ajuste = (p.Pai != null && p.Pai.Esquerda == p) ? -1 : +1;
-                        no = p.Pai!;
+                        var novoPai = filhoDireita.Pai;
+                        if (novoPai is null) return;
+
+                        if (novoPai.Pai != null && novoPai.Pai.Esquerda == novoPai) {
+                            ajuste = -1;
+                        } else {
+                            ajuste = 1;
+                        }
+
+                        no = novoPai.Pai!;
                         if (no is null) return;
                         continue;
                     }
@@ -307,7 +319,13 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
 
                     var topo = no.Pai;
                     if (topo is null) return;
-                    ajuste = (topo.Pai != null && topo.Pai.Esquerda == topo) ? -1 : +1;
+
+                    if (topo.Pai != null && topo.Pai.Esquerda == topo) {
+                        ajuste = -1;
+                    } else {
+                        ajuste = 1;
+                    }
+
                     no = topo.Pai!;
                     if (no is null) return;
                     continue;
@@ -315,22 +333,28 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             }
             else if (no.FatorBalanceamento == 2)
             {
-                var l = no.Esquerda!;
-                if (l.FatorBalanceamento >= 0)
+                var filhoEsquerda = no.Esquerda!;
+                if (filhoEsquerda.FatorBalanceamento >= 0)
                 {
                     // Rotacao simples a direita
                     RotacaoSimplesDireita(no);
-                    if (l.FatorBalanceamento == 0)
+                    if (filhoEsquerda.FatorBalanceamento == 0)
                     {
                         // caso especial, parar
                         return;
                     }
                     else
                     {
-                        var p = l.Pai;
-                        if (p is null) return;
-                        ajuste = (p.Pai != null && p.Pai.Esquerda == p) ? -1 : +1;
-                        no = p.Pai!;
+                        var novoPai = filhoEsquerda.Pai;
+                        if (novoPai is null) return;
+
+                        if (novoPai.Pai != null && novoPai.Pai.Esquerda == novoPai) {
+                            ajuste = -1;
+                        } else {
+                            ajuste = 1;
+                        }
+
+                        no = novoPai.Pai!;
                         if (no is null) return;
                         continue;
                     }
@@ -341,7 +365,13 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                     RotacaoDuplaEsquerdaDireita(no);
                     var topo = no.Pai;
                     if (topo is null) return;
-                    ajuste = (topo.Pai != null && topo.Pai.Esquerda == topo) ? -1 : +1;
+
+                    if (topo.Pai != null && topo.Pai.Esquerda == topo) {
+                        ajuste = -1;
+                    } else {
+                        ajuste = 1;
+                    }
+
                     no = topo.Pai!;
                     if (no is null) return;
                     continue;
