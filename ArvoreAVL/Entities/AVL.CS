@@ -23,8 +23,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
 
             if (comparador == 0)
             {
-                // ignora repetido
-                return;
+                return; // ? Coleguinha não especificou, então so ignora
             }
             else if (comparador < 0)
             {
@@ -37,11 +36,11 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         }
 
         var novo = new Node<T>(dado);
+
         novo.Pai = pai!;
-        if (comparador < 0)
-            pai!.Esquerda = novo;
-        else
-            pai!.Direita = novo;
+
+        if (comparador < 0) pai!.Esquerda = novo;
+        else pai!.Direita = novo;
 
         Tamanho++;
 
@@ -89,7 +88,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     {
         var no = Raiz;
 
-        // Busca para encontrar o nó
+        // Busca para encontrar o no
         while (no is not null)
         {
             int comparador = dado.CompareTo(no.Dado);
@@ -103,15 +102,17 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         if (no.Esquerda is not null && no.Direita is not null)
         {
             // acha o sucessor
-            var s = no.Direita;
-            while (s!.Esquerda is not null) s = s.Esquerda;
-            no.Dado = s.Dado;
-            // agora o problema é remover s
-            no = s;
+            var sucessor = no.Direita;
+            while (sucessor!.Esquerda is not null) sucessor = sucessor.Esquerda;
+            no.Dado = sucessor.Dado;
+
+            // !! Parei aqui, continuar segunda feira
+            no = sucessor;
         }
 
-        // no agr tem no max 1 filho
+        // no agor tem no maximo 1 filho
         Node<T>? filhoUnico = no.Esquerda ?? no.Direita;
+
         var paiNo = no.Pai;
         bool noEraEsquerdo = paiNo is not null && paiNo.Esquerda == no;
 
@@ -119,7 +120,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
 
         if (paiNo is null)
         {
-            Raiz = filhoUnico; // se for a raiz
+            Raiz = filhoUnico; // se for o raiz
         }
         else if (noEraEsquerdo)
         {
@@ -138,47 +139,47 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         return Raiz;
     }
 
-    private List<List<Node<T>?>> GetNodesByLevel()
+    private List<List<Node<T>?>> ObterNosPorNivel()
     {
-        var levels = new List<List<Node<T>?>>();
-        if (Raiz == null) return levels;
+        var niveis = new List<List<Node<T>?>>();
+        if (Raiz == null) return niveis;
 
-        var queue = new Queue<Node<T>?>();
-        queue.Enqueue(Raiz);
+        var fila = new Queue<Node<T>?>();
+        fila.Enqueue(Raiz);
 
-        while (queue.Count > 0)
+        while (fila.Count > 0)
         {
-            var currentLevel = new List<Node<T>?>();
-            int levelSize = queue.Count;
-            bool hasNonNullNode = false;
+            var nivelAtual = new List<Node<T>?>();
+            int tamanhoNivel = fila.Count;
+            bool temNoNaoNulo = false;
 
-            for (int i = 0; i < levelSize; i++)
+            for (int i = 0; i < tamanhoNivel; i++)
             {
-                var node = queue.Dequeue();
-                currentLevel.Add(node);
-                if (node != null)
+                var no = fila.Dequeue();
+                nivelAtual.Add(no);
+                if (no != null)
                 {
-                    hasNonNullNode = true;
-                    queue.Enqueue(node.Esquerda);
-                    queue.Enqueue(node.Direita);
+                    temNoNaoNulo = true;
+                    fila.Enqueue(no.Esquerda);
+                    fila.Enqueue(no.Direita);
                 }
                 else
                 {
-                    queue.Enqueue(null);
-                    queue.Enqueue(null);
+                    fila.Enqueue(null);
+                    fila.Enqueue(null);
                 }
             }
 
-            if (hasNonNullNode)
+            if (temNoNaoNulo)
             {
-                levels.Add(currentLevel);
+                niveis.Add(nivelAtual);
             }
             else
             {
                 break;
             }
         }
-        return levels;
+        return niveis;
     }
     public void Mostrar()
     {
@@ -188,31 +189,32 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             return;
         }
 
-        var levels = GetNodesByLevel();
-        int consoleWidth = 80;
+        var niveis = ObterNosPorNivel();
+        int larguraConsole = 80;
 
-        foreach (var level in levels)
+        foreach (var nivel in niveis)
         {
-            int slotCount = level.Count;
-            int slotWidth = consoleWidth / slotCount;
-            string line = "";
+            int quantidadeSlots = nivel.Count;
+            int larguraSlot = larguraConsole / quantidadeSlots;
+            string linha = "";
 
-            foreach (var node in level)
+            foreach (var no in nivel)
             {
-                string nodeText = "";
-                if (node != null)
+                string textoNo = "";
+                if (no != null)
                 {
-                    nodeText = $"{node.Dado}[{node.FatorBalanceamento}]";
+                    textoNo = $"{no.Dado}[{no.FatorBalanceamento}]";
                 }
 
-                int padding = (slotWidth - nodeText.Length) / 2;
-                if (padding < 0) padding = 0;
+                int preenchimento = (larguraSlot - textoNo.Length) / 2;
+                if (preenchimento < 0) preenchimento = 0;
 
-                line += new string(' ', padding);
-                line += nodeText;
-                line += new string(' ', slotWidth - padding - nodeText.Length);
+                linha += new string(' ', preenchimento);
+                linha += textoNo;
+                linha += new string(' ', larguraSlot - preenchimento - textoNo.Length);
             }
-            Console.WriteLine(line);
+            Console.WriteLine(linha);
+            Console.WriteLine();
         }
     }
 
@@ -220,10 +222,8 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     {
         while (pai is not null)
         {
-            if (pai.Esquerda == filho)
-                pai.FatorBalanceamento++;
-            else if (pai.Direita == filho)
-                pai.FatorBalanceamento--;
+            if (pai.Esquerda == filho) pai.FatorBalanceamento++;
+            else if (pai.Direita == filho) pai.FatorBalanceamento--;
 
             // Checa desbalanceamento
             if (pai.FatorBalanceamento == -2)
@@ -256,12 +256,13 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
             if (pai.FatorBalanceamento == 0) return; // O nó esta balanceado
 
             filho = pai;
+
             pai = pai.Pai;
         }
     }
     private void RebalancearAposRemocao(Node<T> no, int ajuste)
     {
-        // ajuste: -1 se a subarvore da esquerda diminuiu, +1 se a da direita diminuiu
+        // -1 se a subarvore da esquerda diminuiu, +1 se a da direita diminuiu
         while (no is not null)
         {
             no.FatorBalanceamento += ajuste;
@@ -271,12 +272,15 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
 
             else if (no.FatorBalanceamento == 0)
             {
-                // altura diminuiu, tem que continuar subindo
+                // altura diminuiu vai subindo
                 if (no.Pai is null) return;
 
-                if (no.Pai.Esquerda == no) {
+                if (no.Pai.Esquerda == no)
+                {
                     ajuste = -1;
-                } else {
+                }
+                else
+                {
                     ajuste = 1;
                 }
 
@@ -288,41 +292,45 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 var filhoDireita = no.Direita!;
                 if (filhoDireita.FatorBalanceamento <= 0)
                 {
-                    // Rotacao simples a esquerda
                     RotacaoSimplesEsquerda(no);
+
                     if (filhoDireita.FatorBalanceamento == 0)
                     {
-                        // caso especial, a altura nao diminui mais, parar
-                        return;
+                        return; // Para se a altura nao dminuir
                     }
                     else
                     {
-                        // altura diminuiu, continuar com o pai do novo topo
                         var novoPai = filhoDireita.Pai;
                         if (novoPai is null) return;
 
-                        if (novoPai.Pai != null && novoPai.Pai.Esquerda == novoPai) {
+                        if (novoPai.Pai != null && novoPai.Pai.Esquerda == novoPai)
+                        {
                             ajuste = -1;
-                        } else {
+                        }
+                        else
+                        {
                             ajuste = 1;
                         }
 
                         no = novoPai.Pai!;
                         if (no is null) return;
+
                         continue;
                     }
                 }
                 else
                 {
-                    // Rotacao dupla
                     RotacaoDuplaDireitaEsquerda(no);
 
                     var topo = no.Pai;
                     if (topo is null) return;
 
-                    if (topo.Pai != null && topo.Pai.Esquerda == topo) {
+                    if (topo.Pai != null && topo.Pai.Esquerda == topo)
+                    {
                         ajuste = -1;
-                    } else {
+                    }
+                    else
+                    {
                         ajuste = 1;
                     }
 
@@ -340,40 +348,47 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                     RotacaoSimplesDireita(no);
                     if (filhoEsquerda.FatorBalanceamento == 0)
                     {
-                        // caso especial, parar
-                        return;
+                        return; // sai
                     }
                     else
                     {
                         var novoPai = filhoEsquerda.Pai;
+
                         if (novoPai is null) return;
 
-                        if (novoPai.Pai != null && novoPai.Pai.Esquerda == novoPai) {
+                        if (novoPai.Pai != null && novoPai.Pai.Esquerda == novoPai)
+                        {
                             ajuste = -1;
-                        } else {
+                        }
+                        else
+                        {
                             ajuste = 1;
                         }
 
                         no = novoPai.Pai!;
                         if (no is null) return;
+
                         continue;
                     }
                 }
                 else
                 {
-                    // Rotacao dupla
                     RotacaoDuplaEsquerdaDireita(no);
                     var topo = no.Pai;
                     if (topo is null) return;
 
-                    if (topo.Pai != null && topo.Pai.Esquerda == topo) {
+                    if (topo.Pai != null && topo.Pai.Esquerda == topo)
+                    {
                         ajuste = -1;
-                    } else {
+                    }
+                    else
+                    {
                         ajuste = 1;
                     }
 
                     no = topo.Pai!;
                     if (no is null) return;
+
                     continue;
                 }
             }
@@ -383,13 +398,22 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     public Node<T> RotacaoDuplaEsquerdaDireita(Node<T> pai)
     {
         pai.Esquerda = RotacaoSimplesEsquerda(pai.Esquerda!);
-        if (pai.Esquerda is not null) pai.Esquerda.Pai = pai;
+
+        if (pai.Esquerda is not null)
+        {
+            pai.Esquerda.Pai = pai;
+        }
         return RotacaoSimplesDireita(pai);
     }
     public Node<T> RotacaoDuplaDireitaEsquerda(Node<T> pai)
     {
         pai.Direita = RotacaoSimplesDireita(pai.Direita!);
-        if (pai.Direita is not null) pai.Direita.Pai = pai;
+
+        if (pai.Direita is not null)
+        {
+            pai.Direita.Pai = pai;
+        }
+
         return RotacaoSimplesEsquerda(pai);
     }
     public Node<T> RotacaoSimplesDireita(Node<T> pai)
@@ -433,12 +457,10 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     {
         var filho = pai.Direita!;
 
-        // Passa a subarvore esquerda do filho para ser a direita do pai
         pai.Direita = filho.Esquerda;
 
         if (filho.Esquerda is not null) filho.Esquerda.Pai = pai;
 
-        // Faz o pai virar filho a esquerda do novo no
         filho.Esquerda = pai;
 
         // Ajusta referencias de pais
@@ -464,7 +486,7 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
         pai.FatorBalanceamento = fbPai + 1 - Math.Min(fbFilho, 0);
         filho.FatorBalanceamento = fbFilho + 1 + Math.Max(fbPai, 0);
 
-        return filho; // novo topo
+        return filho;
     }
 
 }
