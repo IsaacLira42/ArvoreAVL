@@ -6,6 +6,21 @@ class Program
     {
         Console.Clear();
         var arvore = new AVL<int>();
+        arvore.Insert(50);
+        arvore.Insert(80);
+        arvore.Insert(30);
+        arvore.Insert(65);
+        arvore.Insert(100);
+        arvore.Insert(130);
+        arvore.Insert(62);
+        arvore.Insert(20);
+        arvore.Insert(5);
+        arvore.Insert(7);
+        arvore.Insert(3);
+        arvore.Insert(25);
+        arvore.Insert(1);
+        arvore.Insert(2);
+
 
         while (true)
         {

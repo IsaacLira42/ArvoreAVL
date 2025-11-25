@@ -172,9 +172,12 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
                 int preenchimento = (larguraSlot - textoNo.Length) / 2;
                 if (preenchimento < 0) preenchimento = 0;
 
+                int posPreenchimento = larguraSlot - preenchimento - textoNo.Length;
+                if (posPreenchimento < 0) posPreenchimento = 0;
+
                 linha += new string(' ', preenchimento);
                 linha += textoNo;
-                linha += new string(' ', larguraSlot - preenchimento - textoNo.Length);
+                linha += new string(' ', posPreenchimento);
             }
             Console.WriteLine(linha);
             Console.WriteLine();
@@ -225,34 +228,89 @@ public class AVL<T> : ABP<T>, IAVL<T> where T : IComparable<T>
     }
     private void RebalancearAposRemocao(Node<T> no, int ajuste)
     {
-        // -1 se a subarvore da esquerda diminuiu, +1 se a da direita diminuiu
+        // 'ajuste' é +1 se a altura da subárvore direita diminuiu
+        // 'ajuste' é -1 se a altura da subárvore esquerda diminuiu
+
         while (no is not null)
         {
             no.FatorBalanceamento += ajuste;
 
-            // altura n mudou, parar
-            if (no.FatorBalanceamento == 1 || no.FatorBalanceamento == -1) return;
+            // Caso 1: A subárvore ficou mais balanceada (FB foi para 1 ou -1)
+            // A altura total da subárvore de 'no' não mudou. Fim da propagação.
+            if (no.FatorBalanceamento == 1 || no.FatorBalanceamento == -1)
+            {
+                return;
+            }
 
+            // Caso 2: A subárvore ficou perfeitamente balanceada (FB foi de 1 ou -1 para 0).
+            // A altura total da subárvore de 'no' DIMINUIU. A mudança deve ser propagada para cima.
             else if (no.FatorBalanceamento == 0)
             {
-                // altura diminuiu e vai subindo
                 if (no.Pai is null) return;
+                
+                // A altura da subárvore 'no' diminuiu, então o pai precisa ser atualizado.
+                // Se 'no' é o filho da esquerda, a subárvore esquerda do pai diminuiu.
+                ajuste = (no.Pai.Esquerda == no) ? -1 : 1;
+                no = no.Pai;
+                continue; // Continua subindo
+            }
 
-                if (no.Pai.Esquerda == no)
+            // Caso 3: DESBALANCEAMENTO! (FB se tornou 2 ou -2). Hora de rotacionar.
+            else // Fator de balanceamento é 2 ou -2
+            {
+                Node<T>? pai = no.Pai; // Salva o pai antes da rotação
+                bool eraFilhoEsquerdo = pai is not null && pai.Esquerda == no;
+                var noAtual = no;
+
+                // --- INÍCIO DA LÓGICA DE ROTAÇÃO ---
+                if (noAtual.FatorBalanceamento == 2) // Pende para a esquerda
                 {
-                    ajuste = -1;
+                    if (noAtual.Esquerda!.FatorBalanceamento >= 0)
+                    {
+                        noAtual = RotacaoSimplesDireita(noAtual);
+                    }
+                    else
+                    {
+                        noAtual = RotacaoDuplaEsquerdaDireita(noAtual);
+                    }
+                }
+                else // Fator de balanceamento é -2, pende para a direita
+                {
+                    if (noAtual.Direita!.FatorBalanceamento <= 0)
+                    {
+                        noAtual = RotacaoSimplesEsquerda(noAtual);
+                    }
+                    else
+                    {
+                        noAtual = RotacaoDuplaDireitaEsquerda(noAtual);
+                    }
+                }
+                // --- FIM DA LÓGICA DE ROTAÇÃO ---
+
+                // Conecta a subárvore rotacionada de volta ao pai.
+                if (pai is not null)
+                {
+                    if (eraFilhoEsquerdo) pai.Esquerda = noAtual;
+                    else pai.Direita = noAtual;
                 }
                 else
                 {
-                    ajuste = 1;
+                    Raiz = noAtual; // A raiz da árvore mudou
                 }
 
-                no = no.Pai;
-                continue;
+                // Se o FB da nova raiz da subárvore se tornou 0 após a rotação,
+                // a altura diminuiu, e precisamos continuar subindo.
+                if (noAtual.FatorBalanceamento == 0 && pai is not null)
+                {
+                    // Prepara para a próxima iteração
+                    ajuste = (pai.Esquerda == noAtual) ? -1 : 1;
+                    no = pai;
+                    continue;
+                }
+                
+                // Se a altura se manteve (FB != 0) ou chegamos na raiz, podemos parar.
+                return; 
             }
-
-            // !! não consegui implementar os outros casos
-            // !! Caso em que o fator de balanceamento é -2 ou 2
         }
     }
 
